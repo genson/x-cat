@@ -1,0 +1,63 @@
+<template>
+
+	<style>
+		img {
+			display: inline-block;
+			border-radius: 50%;
+			border: 5px solid #eee;
+			box-shadow: 1px 1px 1px #333;
+			}
+
+	</style>
+
+	<img src="http://placekitten.com/g/200/200" alt="">
+
+</template>
+
+<script>
+
+	(function(){
+
+		var owner = (document.currentScript || {}).ownerDocument || document,
+
+			tmpl = owner.querySelector('template'),
+			tmplBody = document.importNode(tmpl.content, true),
+
+			// Shadow DOM
+			shadow,
+
+			xCatProto = Object.create( HTMLElement.prototype, {
+
+				// API
+
+				createdCallback: {
+					value: function () {
+
+						var width = this.getAttribute('width') || 200,
+							height = this.getAttribute('height') || width;
+
+						shadow = this.createShadowRoot();
+
+						// Виджет не будет наследовать стили документа, в который
+						// встроен.
+						shadow.resetStyleInheritance = true;
+						shadow.appendChild(tmplBody);
+
+						this.setSizes( width, height );
+					}
+				},
+
+				setSizes: {
+					value: function ( width, height ) {
+						height = height || width;
+						shadow.querySelector('img').setAttribute('src', 'http://placekitten.com/g/' + width + '/' + height );
+					}
+				}
+			});
+
+		// register in DOM
+		document.registerElement('x-cat', { prototype: xCatProto });
+
+	})();
+
+</script>
